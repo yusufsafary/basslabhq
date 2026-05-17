@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "BassLab HQ"
+version = "1.0.0"
+id = "artifacts/basslabhq"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25856
+
+[services.development]
+run = "pnpm --filter @workspace/basslabhq run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/basslabhq", "run", "build" ]
+publicDir = "artifacts/basslabhq/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25856"
+BASE_PATH = "/"
