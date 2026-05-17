@@ -8,6 +8,10 @@ import Home from "@/pages/home";
 import Generator from "@/pages/generator";
 import About from "@/pages/about";
 import Contact from "@/pages/contact";
+import HowTo from "@/pages/how-to";
+import Privacy from "@/pages/privacy";
+import Terms from "@/pages/terms";
+import Cookies from "@/pages/cookies";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -19,12 +23,16 @@ function Router() {
       <Route path="/generator" component={Generator} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
+      <Route path="/how-to" component={HowTo} />
+      <Route path="/privacy" component={Privacy} />
+      <Route path="/terms" component={Terms} />
+      <Route path="/cookies" component={Cookies} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -42,5 +50,3 @@ function App() {
     </QueryClientProvider>
   );
 }
-
-export default App;
