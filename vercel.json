@@ -1,15 +1,13 @@
 {
   "version": 2,
   "name": "basslabhq",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist/public"
-      }
-    }
-  ],
+  "buildCommand": "pnpm install && pnpm run build",
+  "outputDirectory": "dist/public",
+  "installCommand": "pnpm install",
+  "framework": null,
+  "env": {
+    "BASE_PATH": "/"
+  },
   "routes": [
     {
       "src": "/assets/(.*)",
