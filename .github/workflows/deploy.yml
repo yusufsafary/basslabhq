@@ -12,13 +12,46 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - name: Deploy to Vercel via API
+        id: deploy
+        run: |
+          echo "Triggering Vercel deployment..."
+          RESPONSE=$(curl -s -X POST "https://api.vercel.com/v13/deployments" \
+            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "basslabhq",
+              "gitSource": {
+                "type": "github",
+                "repoId": "1241389277",
+                "ref": "main"
+              }
+            }')
+          echo "Response: $RESPONSE"
+          DEPLOY_ID=$(echo "$RESPONSE" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+          DEPLOY_URL=$(echo "$RESPONSE" | grep -o '"url":"[^"]*"' | head -1 | cut -d'"' -f4)
+          echo "Deployment ID: $DEPLOY_ID"
+          echo "Deployment URL: https://$DEPLOY_URL"
+          echo "deploy_id=$DEPLOY_ID" >> $GITHUB_OUTPUT
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
-
-      - name: Deploy to Vercel Production
-        run: vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Wait for deployment to complete
+        run: |
+          DEPLOY_ID="${{ steps.deploy.outputs.deploy_id }}"
+          echo "Polling deployment: $DEPLOY_ID"
+          for i in $(seq 1 30); do
+            sleep 10
+            STATE=$(curl -s "https://api.vercel.com/v13/deployments/$DEPLOY_ID" \
+              -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+              | grep -o '"readyState":"[^"]*"' | head -1 | cut -d'"' -f4)
+            echo "Attempt $i/30 — State: $STATE"
+            if [ "$STATE" = "READY" ]; then
+              echo "Deployment READY!"
+              exit 0
+            fi
+            if [ "$STATE" = "ERROR" ] || [ "$STATE" = "CANCELED" ]; then
+              echo "Deployment FAILED with state: $STATE"
+              exit 1
+            fi
+          done
+          echo "Timeout waiting for deployment"
+          exit 1
