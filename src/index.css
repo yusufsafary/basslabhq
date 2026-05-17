@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
@@ -41,7 +41,7 @@
   --color-destructive-border: var(--destructive-border);
 
   --font-sans: var(--app-font-sans);
-  --font-serif: var(--app-font-serif);
+  --font-display: var(--app-font-display);
   --font-mono: var(--app-font-mono);
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -56,91 +56,82 @@
 
   --opaque-button-border-intensity: 9;
 
-  --elevate-1: rgba(255,255,255, .04);
-  --elevate-2: rgba(255,255,255, .09);
+  --elevate-1: rgba(255,255,255, .03);
+  --elevate-2: rgba(255,255,255, .06);
 
-  /* Deep Navy: hsl(222, 47%, 8%) */
-  --background: 222 47% 8%;
-  
-  /* Soft White: hsl(200, 15%, 94%) */
-  --foreground: 200 15% 94%;
-  
-  --border: 222 40% 18%;
-  
-  /* Card surface: hsl(222, 40%, 13%) */
-  --card: 222 40% 13%;
-  --card-foreground: 200 15% 94%;
-  --card-border: 222 40% 18%;
-  
-  --sidebar: 222 47% 8%;
-  --sidebar-foreground: 200 15% 94%;
-  --sidebar-border: 222 40% 18%;
-  --sidebar-primary: 195 90% 48%;
-  --sidebar-primary-foreground: 222 47% 8%;
-  --sidebar-accent: 222 40% 18%;
-  --sidebar-accent-foreground: 200 15% 94%;
-  --sidebar-ring: 195 90% 48%;
-  
-  --popover: 222 40% 13%;
-  --popover-foreground: 200 15% 94%;
-  --popover-border: 222 40% 18%;
-  
-  /* Aqua Blue (primary): hsl(195, 90%, 48%) */
-  --primary: 195 90% 48%;
-  --primary-foreground: 222 47% 8%;
-  
-  /* Emerald (accent): hsl(155, 75%, 42%) */
-  --secondary: 155 75% 42%;
-  --secondary-foreground: 222 47% 8%;
-  
-  --muted: 222 40% 18%;
-  --muted-foreground: 200 15% 70%;
-  
-  --accent: 195 90% 48%;
-  --accent-foreground: 222 47% 8%;
-  
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 200 15% 94%;
-  
-  --input: 222 40% 18%;
-  --ring: 195 90% 48%;
+  /* Deep river black */
+  --background: 213 60% 6%;
 
-  --app-font-sans: 'Outfit', sans-serif;
-  --app-font-serif: Georgia, serif;
-  --app-font-mono: 'Space Mono', monospace;
-  --radius: 0.5rem;
+  /* Off-white warm */
+  --foreground: 210 20% 93%;
+
+  --border: 213 40% 14%;
+
+  --card: 213 50% 9%;
+  --card-foreground: 210 20% 93%;
+  --card-border: 213 40% 14%;
+
+  --sidebar: 213 60% 6%;
+  --sidebar-foreground: 210 20% 93%;
+  --sidebar-border: 213 40% 14%;
+  --sidebar-primary: 38 90% 52%;
+  --sidebar-primary-foreground: 213 60% 6%;
+  --sidebar-accent: 213 40% 14%;
+  --sidebar-accent-foreground: 210 20% 93%;
+  --sidebar-ring: 38 90% 52%;
+
+  --popover: 213 50% 9%;
+  --popover-foreground: 210 20% 93%;
+  --popover-border: 213 40% 14%;
+
+  /* Amber/gold — fishing lure */
+  --primary: 38 90% 52%;
+  --primary-foreground: 213 60% 6%;
+
+  /* Teal — water */
+  --secondary: 174 65% 40%;
+  --secondary-foreground: 213 60% 6%;
+
+  --muted: 213 40% 14%;
+  --muted-foreground: 210 15% 55%;
+
+  --accent: 174 65% 40%;
+  --accent-foreground: 213 60% 6%;
+
+  --destructive: 0 78% 55%;
+  --destructive-foreground: 210 20% 93%;
+
+  --input: 213 40% 14%;
+  --ring: 38 90% 52%;
+
+  --app-font-sans: 'Mulish', system-ui, sans-serif;
+  --app-font-display: 'Bebas Neue', 'Barlow Condensed', system-ui, sans-serif;
+  --app-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --radius: 0.25rem;
 }
 
 .dark {
-  --background: 222 47% 8%;
-  --foreground: 200 15% 94%;
-  --border: 222 40% 18%;
-  --card: 222 40% 13%;
-  --card-foreground: 200 15% 94%;
-  --card-border: 222 40% 18%;
-  --sidebar: 222 47% 8%;
-  --sidebar-foreground: 200 15% 94%;
-  --sidebar-border: 222 40% 18%;
-  --sidebar-primary: 195 90% 48%;
-  --sidebar-primary-foreground: 222 47% 8%;
-  --sidebar-accent: 222 40% 18%;
-  --sidebar-accent-foreground: 200 15% 94%;
-  --sidebar-ring: 195 90% 48%;
-  --popover: 222 40% 13%;
-  --popover-foreground: 200 15% 94%;
-  --popover-border: 222 40% 18%;
-  --primary: 195 90% 48%;
-  --primary-foreground: 222 47% 8%;
-  --secondary: 155 75% 42%;
-  --secondary-foreground: 222 47% 8%;
-  --muted: 222 40% 18%;
-  --muted-foreground: 200 15% 70%;
-  --accent: 195 90% 48%;
-  --accent-foreground: 222 47% 8%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 200 15% 94%;
-  --input: 222 40% 18%;
-  --ring: 195 90% 48%;
+  --background: 213 60% 6%;
+  --foreground: 210 20% 93%;
+  --border: 213 40% 14%;
+  --card: 213 50% 9%;
+  --card-foreground: 210 20% 93%;
+  --card-border: 213 40% 14%;
+  --popover: 213 50% 9%;
+  --popover-foreground: 210 20% 93%;
+  --popover-border: 213 40% 14%;
+  --primary: 38 90% 52%;
+  --primary-foreground: 213 60% 6%;
+  --secondary: 174 65% 40%;
+  --secondary-foreground: 213 60% 6%;
+  --muted: 213 40% 14%;
+  --muted-foreground: 210 15% 55%;
+  --accent: 174 65% 40%;
+  --accent-foreground: 213 60% 6%;
+  --destructive: 0 78% 55%;
+  --destructive-foreground: 210 20% 93%;
+  --input: 213 40% 14%;
+  --ring: 38 90% 52%;
 }
 
 @layer base {
@@ -148,9 +139,33 @@
     @apply border-border;
   }
   body {
-    @apply font-sans antialiased bg-background text-foreground selection:bg-primary selection:text-primary-foreground;
-    background-image: 
-      radial-gradient(circle at 15% 50%, rgba(0, 195, 255, 0.04), transparent 50%),
-      radial-gradient(circle at 85% 30%, rgba(0, 195, 255, 0.03), transparent 50%);
+    @apply font-sans antialiased bg-background text-foreground;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(245,158,11,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(20,184,166,0.04) 0%, transparent 50%);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--app-font-sans);
+  }
+  .font-display {
+    font-family: var(--app-font-display);
+    letter-spacing: 0.01em;
+  }
+  ::selection {
+    background: rgba(245,158,11,0.3);
+    color: white;
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(213, 60%, 6%);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(213, 40%, 20%);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(38, 90%, 52%);
   }
 }
