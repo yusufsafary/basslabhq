@@ -1,21 +1,29 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle } from "lucide-react";
+import React from 'react';
+import { Link } from 'wouter';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md mx-4">
-        <CardContent className="pt-6">
-          <div className="flex mb-4 gap-2">
-            <AlertCircle className="h-8 w-8 text-red-500" />
-            <h1 className="text-2xl font-bold text-gray-900">404 Page Not Found</h1>
-          </div>
-
-          <p className="mt-4 text-sm text-gray-600">
-            Did you forget to add the page to the router?
-          </p>
-        </CardContent>
-      </Card>
+    <div className="min-h-[80vh] flex items-center justify-center px-6">
+      <div className="text-center max-w-md">
+        <div className="font-display text-[9rem] font-black text-white/5 leading-none mb-2 select-none">404</div>
+        <div className="text-5xl mb-6">🎣</div>
+        <h1 className="font-display text-4xl font-black text-white mb-4">NOTHING BITING HERE</h1>
+        <p className="text-slate-500 font-mono text-sm mb-8 leading-relaxed">
+          The page you're looking for swam away. It might have been moved, renamed, or just never existed.
+        </p>
+        <div className="flex gap-3 justify-center">
+          <Link href="/">
+            <button className="px-7 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold font-mono text-sm tracking-widest transition-colors">
+              GO HOME
+            </button>
+          </Link>
+          <Link href="/generator">
+            <button className="px-7 py-3 border border-white/15 hover:border-white/30 text-slate-400 hover:text-white font-bold font-mono text-sm tracking-widest transition-colors">
+              GENERATOR
+            </button>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
