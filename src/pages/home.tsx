@@ -1,70 +1,84 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'wouter';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import FishingScene from '@/components/FishingScene';
 
-const WORDS = ['Precision.', 'Advantage.', 'Victory.'];
+const ROTATING_WORDS = ['PRECISION.', 'ADVANTAGE.', 'DOMINANCE.', 'VICTORY.'];
 
-const features = [
-  { icon:'🎯', tag:'COORDINATES', title:'Precision Hotspots', desc:'X/Y coordinates optimized by species, weather, time of day and season — no more guesswork on the water.' },
-  { icon:'🎣', tag:'LOADOUT', title:'High-Probability Rigs', desc:'Bait, line and hook combos field-tested for specific conditions — from finesse jigs to topwater frogs.' },
-  { icon:'📊', tag:'ANALYTICS', title:'Live Catch Rate', desc:'Probability score computed from all input variables. An honest number, not a motivational guess.' },
-  { icon:'🏆', tag:'TOURNAMENT', title:'Tournament Grade', desc:'Built for players who want the leaderboard. Advanced heuristics modeled on real simulation datasets.' },
+const FEATURES = [
+  { icon:'⚡', tag:'GENERATOR', title:'Precision Coordinates', desc:'X/Y hotspots computed by species, weather, time and season. Every variable modeled.' },
+  { icon:'🎣', tag:'LOADOUT',   title:'Optimal Rigs', desc:'Primary and secondary bait combos tested across thousands of sim runs.' },
+  { icon:'📊', tag:'DATA',      title:'Catch Probability', desc:'Honest probability score. Not a motivational guess. Real computed output.' },
+  { icon:'🏆', tag:'TOURNAMENT', title:'Leaderboard Grade', desc:'Built for competitive players. Advanced heuristics, tournament-level edge.' },
 ];
-
-const STATS = [['12+','Lakes'],['500+','Loadouts'],['97%','Accuracy'],['Free','Forever']];
 
 export default function Home() {
   const [wordIdx, setWordIdx] = useState(0);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const textY = useTransform(scrollYProgress, [0,1], [0, -40]);
+  const sceneOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0.4]);
 
   useEffect(() => {
-    const id = setInterval(() => setWordIdx(i => (i + 1) % WORDS.length), 2400);
+    const id = setInterval(() => setWordIdx(i => (i+1) % ROTATING_WORDS.length), 2600);
     return () => clearInterval(id);
   }, []);
 
   return (
     <div className="w-full">
-      {/* ── HERO ── */}
-      <section className="relative w-full" style={{ height: '100vh', minHeight: 600 }}>
-        <div className="absolute inset-0">
-          <FishingScene />
-        </div>
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to right, rgba(5,13,26,0.92) 0%, rgba(5,13,26,0.75) 45%, rgba(5,13,26,0.15) 100%)'
+
+      {/* ============================================================
+          HERO: Full-viewport interactive fishing emulator
+      ============================================================ */}
+      <section ref={heroRef} className="relative" style={{ height:'100vh', minHeight:620 }}>
+
+        {/* Fishing scene takes the full right portion */}
+        <motion.div className="absolute inset-0" style={{ opacity: sceneOpacity }}>
+          <FishingScene showUI={true}/>
+        </motion.div>
+
+        {/* Left overlay gradient for text legibility */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'linear-gradient(105deg, rgba(3,8,16,0.97) 0%, rgba(3,8,16,0.92) 32%, rgba(3,8,16,0.65) 55%, rgba(3,8,16,0.08) 80%, transparent 100%)'
         }}/>
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(to top, rgba(5,13,26,0.6) 0%, transparent 35%)'
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'linear-gradient(to top, rgba(3,8,16,0.7) 0%, transparent 30%)'
         }}/>
 
-        <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-20 max-w-3xl">
+        {/* Text content (left side, z-20 to be above scene UI) */}
+        <motion.div
+          style={{ y: textY }}
+          className="absolute inset-0 flex flex-col justify-center px-8 md:px-14 lg:px-20 max-w-2xl pointer-events-none z-20">
+
           <motion.div
-            initial={{ opacity:0, y:14 }}
+            initial={{ opacity:0, y:16 }}
             animate={{ opacity:1, y:0 }}
             transition={{ duration:0.55, ease:[0.25,0.1,0.25,1] }}>
-            <span className="inline-flex items-center gap-2 px-3 py-1 border border-amber-500/40 bg-amber-500/8 text-amber-400 text-xs font-mono tracking-widest uppercase mb-7">
+            <div className="inline-flex items-center gap-2.5 mb-7">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"/>
-              LIVE — Fishing Sim Tools v2.1
-            </span>
+              <span className="text-[10px] font-mono tracking-[0.28em] text-amber-400/80 uppercase">Live Fishing Simulator Tools</span>
+            </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity:0, y:22 }}
+            initial={{ opacity:0, y:24 }}
             animate={{ opacity:1, y:0 }}
-            transition={{ duration:0.6, delay:0.1, ease:[0.25,0.1,0.25,1] }}>
-            <h1 className="font-display text-6xl sm:text-7xl lg:text-8xl font-black leading-none text-white mb-2">
-              BASSLAB HQ
+            transition={{ duration:0.6, delay:0.08, ease:[0.25,0.1,0.25,1] }}>
+            <h1 style={{ fontFamily:'Bebas Neue, sans-serif', lineHeight:0.92 }}
+              className="text-7xl sm:text-8xl lg:text-9xl font-black text-white mb-3 tracking-wide">
+              BASSLAB<br/>
+              <span className="text-amber-400">HQ</span>
             </h1>
-            <div className="font-display text-3xl sm:text-4xl lg:text-5xl font-black leading-none mb-6" style={{ minHeight:'1.2em' }}>
+            <div style={{ minHeight:'1.1em', fontFamily:'Bebas Neue, sans-serif' }}
+              className="text-3xl sm:text-4xl font-black text-slate-300 mb-7 tracking-wider overflow-hidden">
               <AnimatePresence mode="wait">
-                <motion.span
-                  key={wordIdx}
-                  initial={{ opacity:0, y:14 }}
+                <motion.span key={wordIdx}
+                  initial={{ opacity:0, y:20 }}
                   animate={{ opacity:1, y:0 }}
-                  exit={{ opacity:0, y:-14 }}
-                  transition={{ duration:0.3, ease:[0.25,0.1,0.25,1] }}
-                  className="text-amber-400 block"
-                >
-                  {WORDS[wordIdx]}
+                  exit={{ opacity:0, y:-20 }}
+                  transition={{ duration:0.28, ease:[0.25,0.1,0.25,1] }}
+                  className="block text-amber-400">
+                  {ROTATING_WORDS[wordIdx]}
                 </motion.span>
               </AnimatePresence>
             </div>
@@ -73,122 +87,110 @@ export default function Home() {
           <motion.p
             initial={{ opacity:0 }}
             animate={{ opacity:1 }}
-            transition={{ duration:0.7, delay:0.25, ease:'easeOut' }}
-            className="text-lg text-slate-300 max-w-xl mb-10 leading-relaxed">
-            Precision tools for fishing simulation players. Generate optimal coordinates, loadouts and catch strategies — powered by real game data.
+            transition={{ duration:0.7, delay:0.22, ease:'easeOut' }}
+            className="text-base text-slate-400 max-w-sm mb-8 leading-relaxed">
+            Precision tools for fishing simulation players. Hotspot coordinates, optimal loadouts and catch probability computed from real game data.
           </motion.p>
 
           <motion.div
-            initial={{ opacity:0, y:14 }}
+            initial={{ opacity:0, y:12 }}
             animate={{ opacity:1, y:0 }}
-            transition={{ duration:0.5, delay:0.35, ease:[0.25,0.1,0.25,1] }}
-            className="flex flex-wrap gap-3 mb-14">
+            transition={{ duration:0.5, delay:0.32, ease:[0.25,0.1,0.25,1] }}
+            className="flex flex-wrap gap-3 mb-10 pointer-events-auto">
             <Link href="/generator">
-              <button className="px-9 py-4 bg-amber-500 hover:bg-amber-400 text-black font-bold font-mono tracking-widest text-sm transition-all duration-200 shadow-xl shadow-amber-500/25 hover:shadow-amber-400/35 hover:-translate-y-0.5 active:translate-y-0">
-                LAUNCH GENERATOR →
+              <button style={{ background:'#f59e0b', color:'#000', fontFamily:'JetBrains Mono, monospace', letterSpacing:'0.2em', border:'none' }}
+                className="px-9 py-4 font-black text-xs uppercase transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 hover:brightness-110 shadow-xl shadow-amber-500/20">
+                LAUNCH GENERATOR
               </button>
             </Link>
             <Link href="/how-to">
-              <button className="px-9 py-4 border border-white/20 hover:border-teal-400/50 text-slate-300 hover:text-teal-400 font-bold font-mono tracking-widest text-sm transition-all duration-200 bg-black/20 backdrop-blur-sm hover:-translate-y-0.5 active:translate-y-0">
+              <button style={{ background:'transparent', color:'rgba(148,163,184,0.85)', fontFamily:'JetBrains Mono, monospace', letterSpacing:'0.2em', border:'1px solid rgba(255,255,255,0.12)' }}
+                className="px-9 py-4 font-bold text-xs uppercase transition-all duration-200 hover:-translate-y-0.5 hover:border-amber-500/30 hover:text-amber-400 active:translate-y-0">
                 HOW IT WORKS
               </button>
             </Link>
           </motion.div>
 
+          {/* Stats row */}
           <motion.div
             initial={{ opacity:0 }}
             animate={{ opacity:1 }}
-            transition={{ duration:0.6, delay:0.5 }}
-            className="flex gap-8 pt-6 border-t border-white/10">
-            {STATS.map(([v,l], i) => (
+            transition={{ duration:0.6, delay:0.45 }}
+            className="flex gap-7 border-t pt-6"
+            style={{ borderColor:'rgba(255,255,255,0.07)' }}>
+            {[['12+','Lakes'],['500+','Loadouts'],['97%','Accuracy'],['Free','Forever']].map(([v,l],i) => (
               <motion.div key={l}
                 initial={{ opacity:0, y:8 }}
                 animate={{ opacity:1, y:0 }}
-                transition={{ duration:0.4, delay:0.55 + i*0.07, ease:[0.25,0.1,0.25,1] }}>
-                <div className="font-display text-2xl font-black text-amber-400">{v}</div>
-                <div className="text-[11px] font-mono text-slate-500 uppercase tracking-wider">{l}</div>
+                transition={{ delay:0.5+i*0.07, duration:0.35, ease:[0.25,0.1,0.25,1] }}>
+                <div style={{ fontFamily:'Bebas Neue, sans-serif' }} className="text-2xl font-black text-amber-400">{v}</div>
+                <div className="text-[10px] font-mono text-slate-600 uppercase tracking-wider">{l}</div>
               </motion.div>
             ))}
           </motion.div>
-        </div>
+        </motion.div>
 
+        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity:0 }}
-          animate={{ opacity:0.4 }}
-          transition={{ duration:1, delay:1.2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5">
-          <span className="text-[10px] font-mono text-slate-400 tracking-widest uppercase">Scroll</span>
+          animate={{ opacity:0.45 }}
+          transition={{ delay:1.4 }}
+          className="absolute bottom-7 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex flex-col items-center gap-1.5">
+          <span className="text-[9px] font-mono text-slate-500 tracking-[0.25em] uppercase">Scroll</span>
           <motion.div
-            animate={{ y:[0,4,0] }}
-            transition={{ duration:1.5, repeat:Infinity, ease:'easeInOut' }}
-            className="w-px h-10 bg-gradient-to-b from-slate-400 to-transparent"/>
+            animate={{ y:[0,5,0] }}
+            transition={{ duration:1.4, repeat:Infinity, ease:'easeInOut' }}
+            className="w-px h-9"
+            style={{ background:'linear-gradient(to bottom, rgba(148,163,184,0.5), transparent)' }}/>
         </motion.div>
       </section>
 
-      {/* ── FEATURES ── */}
-      <section className="py-28 bg-[#07111f] border-t border-white/5">
+      {/* ============================================================
+          FEATURES GRID
+      ============================================================ */}
+      <section className="py-24 border-t" style={{ background:'#040c17', borderColor:'rgba(255,255,255,0.05)' }}>
         <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <motion.div
-            initial={{ opacity:0, y:16 }}
-            whileInView={{ opacity:1, y:0 }}
-            viewport={{ once:true, amount:0.3 }}
-            transition={{ duration:0.5, ease:[0.25,0.1,0.25,1] }}
-            className="text-center mb-16">
-            <p className="text-[11px] font-mono tracking-[0.28em] text-amber-400/70 uppercase mb-3">WHAT WE PROVIDE</p>
-            <h2 className="font-display text-4xl md:text-5xl font-black text-white">
-              Everything you need<br/><span className="text-teal-400">to land the big one.</span>
-            </h2>
-          </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {features.map((f, i) => (
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
+            <motion.div
+              initial={{ opacity:0, y:14 }}
+              whileInView={{ opacity:1, y:0 }}
+              viewport={{ once:true, amount:0.3 }}
+              transition={{ duration:0.5, ease:[0.25,0.1,0.25,1] }}>
+              <p className="text-[10px] font-mono tracking-[0.28em] text-teal-400/60 uppercase mb-3">CAPABILITIES</p>
+              <h2 style={{ fontFamily:'Bebas Neue, sans-serif' }}
+                className="text-5xl md:text-6xl font-black text-white leading-tight">
+                EVERY TOOL<br/><span className="text-teal-400">YOU NEED.</span>
+              </h2>
+            </motion.div>
+            <motion.p
+              initial={{ opacity:0 }}
+              whileInView={{ opacity:1 }}
+              viewport={{ once:true, amount:0.3 }}
+              transition={{ duration:0.6, delay:0.1 }}
+              className="text-slate-500 text-sm max-w-xs leading-relaxed font-mono">
+              Computed from simulation data. No forum guesses. No stale spreadsheets.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 border border-white/5">
+            {FEATURES.map((f, i) => (
               <motion.div key={i}
-                initial={{ opacity:0, y:28 }}
+                initial={{ opacity:0, y:20 }}
                 whileInView={{ opacity:1, y:0 }}
                 viewport={{ once:true, amount:0.2 }}
                 transition={{ delay:i*0.1, duration:0.5, ease:[0.25,0.1,0.25,1] }}
-                className="group p-7 bg-white/[0.028] border border-white/[0.07] hover:border-amber-500/30 transition-all duration-300 relative overflow-hidden hover:-translate-y-1">
-                <div className="absolute top-0 left-0 right-0 h-px bg-amber-500/0 group-hover:bg-amber-500/50 transition-all duration-300"/>
-                <div className="text-3xl mb-5">{f.icon}</div>
-                <p className="text-[10px] font-mono tracking-[0.22em] text-slate-500 mb-2">{f.tag}</p>
-                <h3 className="font-display text-xl font-black text-white mb-3 leading-tight">{f.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{f.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ── */}
-      <section className="py-24 bg-[#060e1a] border-t border-white/5">
-        <div className="max-w-5xl mx-auto px-6 md:px-12">
-          <motion.div
-            initial={{ opacity:0, y:16 }}
-            whileInView={{ opacity:1, y:0 }}
-            viewport={{ once:true, amount:0.3 }}
-            transition={{ duration:0.5, ease:[0.25,0.1,0.25,1] }}
-            className="text-center mb-14">
-            <p className="text-[11px] font-mono tracking-[0.28em] text-teal-400/70 uppercase mb-3">THE PROCESS</p>
-            <h2 className="font-display text-4xl md:text-5xl font-black text-white">Three steps to your next catch.</h2>
-          </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { step:'01', title:'Set Parameters', desc:'Choose your lake, target species, weather conditions, time of day and season modifier.' },
-              { step:'02', title:'Initiate Scan', desc:'Our engine processes all variables through thousands of heuristic simulations in under 2 seconds.' },
-              { step:'03', title:'Execute Loadout', desc:'Get precise coordinates, optimal bait selection and tactical tips tailored to your exact conditions.' },
-            ].map((s,i) => (
-              <motion.div key={i}
-                initial={{ opacity:0, y:24 }}
-                whileInView={{ opacity:1, y:0 }}
-                viewport={{ once:true, amount:0.2 }}
-                transition={{ delay:i*0.12, duration:0.5, ease:[0.25,0.1,0.25,1] }}
-                className="text-center p-8 border border-white/6 bg-white/[0.02] relative hover:border-amber-500/20 transition-colors duration-300">
-                <div className="font-display text-7xl font-black text-white/5 absolute top-4 left-1/2 -translate-x-1/2">{s.step}</div>
-                <div className="relative z-10">
-                  <div className="w-10 h-10 border border-amber-500/40 flex items-center justify-center mx-auto mb-5">
-                    <span className="font-mono text-sm font-bold text-amber-400">{s.step}</span>
-                  </div>
-                  <h3 className="font-display text-2xl text-white mb-3">{s.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{s.desc}</p>
+                className="p-7 relative group cursor-default transition-all duration-300"
+                style={{
+                  borderRight: i < 3 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                  borderBottom: '1px solid rgba(255,255,255,0.05)',
+                }}>
+                <div className="absolute top-0 left-0 right-0 h-px bg-amber-500/0 group-hover:bg-amber-500/60 transition-all duration-400"/>
+                <div className="absolute inset-0 bg-amber-500/0 group-hover:bg-amber-500/[0.03] transition-all duration-400"/>
+                <div className="relative">
+                  <span className="text-2xl block mb-5">{f.icon}</span>
+                  <p className="text-[9px] font-mono tracking-[0.22em] text-slate-600 mb-3 uppercase">{f.tag}</p>
+                  <h3 style={{ fontFamily:'Bebas Neue, sans-serif' }} className="text-2xl text-white mb-3 leading-tight">{f.title}</h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">{f.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -196,29 +198,99 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="py-28 bg-[#07111f] border-t border-white/5 relative overflow-hidden">
+      {/* ============================================================
+          3-STEP PROCESS
+      ============================================================ */}
+      <section className="py-24 border-t" style={{ background:'#030911', borderColor:'rgba(255,255,255,0.04)' }}>
+        <div className="max-w-5xl mx-auto px-6 md:px-12">
+          <motion.div
+            initial={{ opacity:0, y:14 }}
+            whileInView={{ opacity:1, y:0 }}
+            viewport={{ once:true, amount:0.3 }}
+            transition={{ duration:0.5, ease:[0.25,0.1,0.25,1] }}
+            className="mb-16 text-center">
+            <p className="text-[10px] font-mono tracking-[0.28em] text-amber-400/60 uppercase mb-4">THE PROCESS</p>
+            <h2 style={{ fontFamily:'Bebas Neue, sans-serif' }} className="text-5xl md:text-6xl font-black text-white">
+              THREE STEPS. ONE EDGE.
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px" style={{ background:'rgba(255,255,255,0.04)' }}>
+            {[
+              { n:'01', t:'Configure', d:'Set your lake, species, weather and time. Every variable is factored into the output.' },
+              { n:'02', t:'Compute',   d:'Engine runs heuristic simulations in under 2 seconds. Thousands of possible states evaluated.' },
+              { n:'03', t:'Execute',   d:'Precise coordinates, optimal bait, depth zone, cast distance and tactical tips. All ready.' },
+            ].map((s, i) => (
+              <motion.div key={i}
+                initial={{ opacity:0, y:20 }}
+                whileInView={{ opacity:1, y:0 }}
+                viewport={{ once:true, amount:0.2 }}
+                transition={{ delay:i*0.12, duration:0.5, ease:[0.25,0.1,0.25,1] }}
+                className="p-8 relative group hover:-translate-y-1 transition-transform duration-300"
+                style={{ background:'#030911' }}>
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/0 group-hover:via-amber-500/40 to-transparent transition-all duration-400"/>
+                <div style={{ fontFamily:'Bebas Neue, sans-serif' }}
+                  className="text-8xl font-black text-white/4 group-hover:text-amber-500/10 transition-colors duration-300 absolute top-3 right-4 leading-none">
+                  {s.n}
+                </div>
+                <div className="relative">
+                  <div className="w-9 h-9 border border-amber-500/30 flex items-center justify-center mb-5 group-hover:border-amber-500/60 transition-colors">
+                    <span className="font-mono text-xs font-bold text-amber-400">{s.n}</span>
+                  </div>
+                  <h3 style={{ fontFamily:'Bebas Neue, sans-serif' }} className="text-3xl text-white mb-3">{s.t}</h3>
+                  <p className="text-xs text-slate-500 leading-relaxed font-mono">{s.d}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          CTA BLOCK
+      ============================================================ */}
+      <section className="py-28 border-t relative overflow-hidden" style={{ background:'#040c17', borderColor:'rgba(255,255,255,0.05)' }}>
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'radial-gradient(ellipse at 50% 100%, rgba(245,158,11,0.06) 0%, transparent 65%)'
+          background:'radial-gradient(ellipse at 50% 100%, rgba(245,158,11,0.07) 0%, transparent 65%)'
         }}/>
+        {/* Grid overlay */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }}/>
+
         <motion.div
           initial={{ opacity:0, y:20 }}
           whileInView={{ opacity:1, y:0 }}
           viewport={{ once:true, amount:0.3 }}
           transition={{ duration:0.6, ease:[0.25,0.1,0.25,1] }}
-          className="relative max-w-3xl mx-auto px-6 text-center">
-          <p className="text-[11px] font-mono tracking-[0.28em] text-amber-400/70 uppercase mb-5">GET STARTED NOW</p>
-          <h2 className="font-display text-5xl md:text-6xl font-black text-white leading-none mb-6">
-            READY TO <span className="text-amber-400">DOMINATE</span><br/>THE LEADERBOARD?
+          className="relative max-w-4xl mx-auto px-6 text-center">
+
+          <p className="text-[10px] font-mono tracking-[0.32em] text-amber-400/60 uppercase mb-6">GET YOUR EDGE</p>
+
+          <h2 style={{ fontFamily:'Bebas Neue, sans-serif', lineHeight:0.92 }}
+            className="text-6xl sm:text-7xl md:text-8xl font-black text-white mb-8">
+            READY TO<br/><span className="text-amber-400">OWN THE</span><br/>LEADERBOARD?
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto mb-10 text-lg leading-relaxed">
-            Thousands of players already use BassLab HQ to sharpen their edge. 100% free. Always will be.
+
+          <p className="text-slate-500 text-sm max-w-sm mx-auto mb-10 leading-relaxed font-mono">
+            Thousands of players already run BassLab HQ before every session. Free. Always.
           </p>
-          <Link href="/generator">
-            <button className="px-14 py-5 bg-amber-500 hover:bg-amber-400 text-black font-bold font-mono tracking-widest text-base transition-all duration-200 shadow-2xl shadow-amber-500/20 hover:shadow-amber-400/30 hover:-translate-y-0.5 active:translate-y-0">
-              LAUNCH GENERATOR →
-            </button>
-          </Link>
+
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Link href="/generator">
+              <button style={{ background:'#f59e0b', color:'#000', fontFamily:'JetBrains Mono, monospace', letterSpacing:'0.2em', border:'none' }}
+                className="px-12 py-5 font-black text-sm uppercase transition-all duration-200 shadow-2xl shadow-amber-500/20 hover:brightness-110 hover:-translate-y-0.5 active:translate-y-0">
+                LAUNCH GENERATOR
+              </button>
+            </Link>
+            <Link href="/how-to">
+              <button style={{ background:'transparent', fontFamily:'JetBrains Mono, monospace', letterSpacing:'0.18em', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(148,163,184,0.7)' }}
+                className="px-12 py-5 font-bold text-sm uppercase transition-all duration-200 hover:border-teal-400/30 hover:text-teal-400 hover:-translate-y-0.5">
+                READ THE DOCS
+              </button>
+            </Link>
+          </div>
         </motion.div>
       </section>
     </div>
