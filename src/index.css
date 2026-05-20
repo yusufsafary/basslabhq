@@ -47,34 +47,39 @@
   --opaque-button-border-intensity: 9;
   --elevate-1: rgba(255,255,255,.03);
   --elevate-2: rgba(255,255,255,.06);
-  --background: 213 60% 6%;
-  --foreground: 210 20% 93%;
-  --border: 213 40% 14%;
-  --card: 213 50% 9%;
-  --card-foreground: 210 20% 93%;
-  --card-border: 213 40% 14%;
-  --sidebar: 213 60% 6%;
-  --sidebar-foreground: 210 20% 93%;
-  --sidebar-border: 213 40% 14%;
+
+  /* Deep lake water */
+  --background: 218 68% 7%;
+  /* Warm off-white */
+  --foreground: 200 20% 92%;
+  --border: 215 40% 16%;
+  --card: 216 55% 10%;
+  --card-foreground: 200 20% 92%;
+  --card-border: 215 40% 16%;
+  --sidebar: 218 68% 7%;
+  --sidebar-foreground: 200 20% 92%;
+  --sidebar-border: 215 40% 16%;
   --sidebar-primary: 38 90% 52%;
-  --sidebar-primary-foreground: 213 60% 6%;
-  --sidebar-accent: 213 40% 14%;
-  --sidebar-accent-foreground: 210 20% 93%;
+  --sidebar-primary-foreground: 218 68% 7%;
+  --sidebar-accent: 215 40% 16%;
+  --sidebar-accent-foreground: 200 20% 92%;
   --sidebar-ring: 38 90% 52%;
-  --popover: 213 50% 9%;
-  --popover-foreground: 210 20% 93%;
-  --popover-border: 213 40% 14%;
+  --popover: 216 55% 10%;
+  --popover-foreground: 200 20% 92%;
+  --popover-border: 215 40% 16%;
+  /* Fishing lure gold / sunrise */
   --primary: 38 90% 52%;
-  --primary-foreground: 213 60% 6%;
-  --secondary: 174 65% 40%;
-  --secondary-foreground: 213 60% 6%;
-  --muted: 213 40% 14%;
-  --muted-foreground: 210 15% 55%;
-  --accent: 174 65% 40%;
-  --accent-foreground: 213 60% 6%;
+  --primary-foreground: 218 68% 7%;
+  /* Lake water teal */
+  --secondary: 185 72% 42%;
+  --secondary-foreground: 218 68% 7%;
+  --muted: 215 40% 14%;
+  --muted-foreground: 210 18% 62%;
+  --accent: 185 72% 42%;
+  --accent-foreground: 218 68% 7%;
   --destructive: 0 78% 55%;
-  --destructive-foreground: 210 20% 93%;
-  --input: 213 40% 14%;
+  --destructive-foreground: 200 20% 92%;
+  --input: 215 40% 14%;
   --ring: 38 90% 52%;
   --app-font-sans: 'Mulish', system-ui, sans-serif;
   --app-font-display: 'Bebas Neue', 'Barlow Condensed', system-ui, sans-serif;
@@ -83,26 +88,26 @@
 }
 
 .dark {
-  --background: 213 60% 6%;
-  --foreground: 210 20% 93%;
-  --border: 213 40% 14%;
-  --card: 213 50% 9%;
-  --card-foreground: 210 20% 93%;
-  --card-border: 213 40% 14%;
-  --popover: 213 50% 9%;
-  --popover-foreground: 210 20% 93%;
-  --popover-border: 213 40% 14%;
+  --background: 218 68% 7%;
+  --foreground: 200 20% 92%;
+  --border: 215 40% 16%;
+  --card: 216 55% 10%;
+  --card-foreground: 200 20% 92%;
+  --card-border: 215 40% 16%;
+  --popover: 216 55% 10%;
+  --popover-foreground: 200 20% 92%;
+  --popover-border: 215 40% 16%;
   --primary: 38 90% 52%;
-  --primary-foreground: 213 60% 6%;
-  --secondary: 174 65% 40%;
-  --secondary-foreground: 213 60% 6%;
-  --muted: 213 40% 14%;
-  --muted-foreground: 210 15% 55%;
-  --accent: 174 65% 40%;
-  --accent-foreground: 213 60% 6%;
+  --primary-foreground: 218 68% 7%;
+  --secondary: 185 72% 42%;
+  --secondary-foreground: 218 68% 7%;
+  --muted: 215 40% 14%;
+  --muted-foreground: 210 18% 62%;
+  --accent: 185 72% 42%;
+  --accent-foreground: 218 68% 7%;
   --destructive: 0 78% 55%;
-  --destructive-foreground: 210 20% 93%;
-  --input: 213 40% 14%;
+  --destructive-foreground: 200 20% 92%;
+  --input: 215 40% 14%;
   --ring: 38 90% 52%;
 }
 
@@ -111,10 +116,11 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    /* Lake/water inspired background gradients */
     background-image:
-      radial-gradient(ellipse at 18% 0%, rgba(245,158,11,0.055) 0%, transparent 52%),
-      radial-gradient(ellipse at 82% 100%, rgba(20,184,166,0.055) 0%, transparent 52%),
-      radial-gradient(ellipse at 50% 50%, rgba(2,6,16,0.5) 0%, transparent 80%);
+      radial-gradient(ellipse at 20% 0%,   rgba(20,184,166,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 100%, rgba(245,158,11,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 40%,  rgba(8,145,178,0.04) 0%, transparent 60%);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
@@ -122,7 +128,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--app-font-sans);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
   }
 
   .font-display {
@@ -130,49 +136,52 @@
     letter-spacing: 0.01em;
   }
 
+  /* Better text selection — water blue */
   ::selection {
-    background: rgba(245,158,11,0.28);
+    background: rgba(20,184,166,0.32);
     color: white;
   }
 
+  /* Scrollbar — water themed */
   ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: hsl(213,60%,4%); }
-  ::-webkit-scrollbar-thumb { background: hsl(213,40%,18%); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: hsl(38,90%,52%); }
+  ::-webkit-scrollbar-track { background: hsl(218,68%,5%); }
+  ::-webkit-scrollbar-thumb { background: hsl(215,40%,20%); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(185,72%,42%); }
 }
 
 @layer utilities {
-  /* ── Glassmorphism ── */
+  /* ── Glass card ── */
   .glass {
-    background: rgba(3,8,20,0.75);
-    backdrop-filter: blur(20px) saturate(1.5);
-    -webkit-backdrop-filter: blur(20px) saturate(1.5);
-    border: 1px solid rgba(255,255,255,0.075);
+    background: rgba(4,12,30,0.78);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid rgba(80,160,220,0.1);
   }
 
   .glass-amber {
-    background: rgba(3,8,20,0.82);
-    backdrop-filter: blur(22px) saturate(1.6);
-    -webkit-backdrop-filter: blur(22px) saturate(1.6);
+    background: rgba(4,12,30,0.82);
+    backdrop-filter: blur(22px) saturate(1.5);
+    -webkit-backdrop-filter: blur(22px) saturate(1.5);
     border: 1px solid rgba(245,158,11,0.14);
   }
 
-  /* ── Gradient text ── */
+  /* ── Gradient text — warm gold (sunrise / fishing lure) ── */
   .text-gradient-amber {
-    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 45%, #fcd34d 100%);
+    background: linear-gradient(135deg, #ffd040 0%, #f59e0b 45%, #e8621a 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
+  /* ── Gradient text — lake water teal ── */
   .text-gradient-teal {
-    background: linear-gradient(135deg, #14b8a6 0%, #2dd4bf 55%, #5eead4 100%);
+    background: linear-gradient(135deg, #40d8e0 0%, #14b8a6 50%, #0891b2 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  /* ── Glow amber CTA button ── */
+  /* ── Glow CTA button ── */
   .btn-amber-glow {
     position: relative;
     overflow: hidden;
@@ -184,19 +193,19 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, transparent 55%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 55%);
     opacity: 0;
     transition: opacity 0.2s;
   }
   .btn-amber-glow:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(245,158,11,0.38), 0 2px 8px rgba(245,158,11,0.22);
+    box-shadow: 0 8px 30px rgba(245,158,11,0.42), 0 3px 10px rgba(0,0,0,0.35);
     filter: brightness(1.06);
   }
   .btn-amber-glow:hover::after { opacity: 1; }
   .btn-amber-glow:active { transform: translateY(0); box-shadow: none; }
 
-  /* ── Highlight top-line card ── */
+  /* ── Card top-line highlight ── */
   .card-top-line {
     position: relative;
     overflow: hidden;
@@ -220,11 +229,11 @@
     box-shadow: 0 16px 48px rgba(0,0,0,0.45), 0 0 0 1px rgba(245,158,11,0.08);
   }
 
-  /* ── Subtle grid ── */
+  /* ── Subtle grid overlay ── */
   .grid-bg {
     background-image:
-      linear-gradient(rgba(255,255,255,0.016) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.016) 1px, transparent 1px);
+      linear-gradient(rgba(80,160,200,0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(80,160,200,0.022) 1px, transparent 1px);
     background-size: 52px 52px;
   }
 
@@ -233,29 +242,13 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 10px;
-    border: 1px solid rgba(245,158,11,0.22);
-    background: rgba(245,158,11,0.06);
+    padding: 4px 12px;
+    border: 1px solid rgba(245,158,11,0.25);
+    background: rgba(245,158,11,0.07);
     font-family: var(--app-font-mono);
     font-size: 0.6rem;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: rgba(245,158,11,0.8);
-  }
-
-  /* ── Animated underline for nav ── */
-  .nav-link-active {
-    position: relative;
-  }
-  .nav-link-active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 18px;
-    height: 1.5px;
-    background: #f59e0b;
-    border-radius: 1px;
+    color: rgba(255,200,80,0.85);
   }
 }
