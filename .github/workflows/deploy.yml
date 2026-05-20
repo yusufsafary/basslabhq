@@ -36,7 +36,7 @@ jobs:
           echo "Deployment URL: https://$DEPLOY_URL"
           echo "deploy_id=$DEPLOY_ID" >> $GITHUB_OUTPUT
 
-      - name: Wait and assign production alias
+      - name: Wait and assign production aliases
         run: |
           DEPLOY_ID="${{ steps.deploy.outputs.deploy_id }}"
           if [ -z "$DEPLOY_ID" ]; then
@@ -53,14 +53,31 @@ jobs:
             echo "[$i/40] State: $STATE"
 
             if [ "$STATE" = "READY" ]; then
-              echo "Deployment ready. Assigning basslabhq.vercel.app..."
+              echo "Deployment ready. Assigning aliases..."
+
               curl -s -X POST \
                 -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
                 -H "Content-Type: application/json" \
                 "https://api.vercel.com/v2/deployments/$DEPLOY_ID/aliases" \
                 -d '{"alias":"basslabhq.vercel.app"}'
+              echo "Assigned basslabhq.vercel.app"
+
+              curl -s -X POST \
+                -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+                -H "Content-Type: application/json" \
+                "https://api.vercel.com/v2/deployments/$DEPLOY_ID/aliases" \
+                -d '{"alias":"basslabhq.fun"}'
+              echo "Assigned basslabhq.fun"
+
+              curl -s -X POST \
+                -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+                -H "Content-Type: application/json" \
+                "https://api.vercel.com/v2/deployments/$DEPLOY_ID/aliases" \
+                -d '{"alias":"www.basslabhq.fun"}'
+              echo "Assigned www.basslabhq.fun"
+
               echo ""
-              echo "Live at https://basslabhq.vercel.app"
+              echo "Live at https://basslabhq.fun"
               exit 0
             fi
 
