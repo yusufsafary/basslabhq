@@ -15,64 +15,51 @@ jobs:
 
       - name: Trigger Vercel deployment
         id: deploy
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          set -e
-          echo "Triggering Vercel deployment for ${{ github.sha }}..."
-
           RESPONSE=$(curl -s -X POST \
-            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
             -H "Content-Type: application/json" \
             "https://api.vercel.com/v13/deployments" \
-            -d "{
-              \"name\": \"basslabhq\",
-              \"gitSource\": {
-                \"type\": \"github\",
-                \"repoId\": \"1241389277\",
-                \"ref\": \"main\",
-                \"sha\": \"${{ github.sha }}\"
-              },
-              \"projectId\": \"prj_LXn4txLDZYEIgP5afDdoh3uIwMI6\",
-              \"teamId\": \"team_FQL2L51QuUYN5gsM5ja91r17\",
-              \"target\": \"production\"
-            }")
+            -d '{
+              "name": "basslabhq",
+              "gitSource": {
+                "type": "github",
+                "repoId": "1241389277",
+                "ref": "main"
+              }
+            }')
 
-          echo "$RESPONSE" | jq '{ id: .id, url: .url, state: .readyState }' || echo "$RESPONSE"
+          echo "Response: $RESPONSE"
+          DEPLOY_ID=$(echo "$RESPONSE" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+          DEPLOY_URL=$(echo "$RESPONSE" | grep -o '"url":"[^"]*"' | head -1 | cut -d'"' -f4)
+          echo "Deployment ID: $DEPLOY_ID"
+          echo "Deployment URL: https://$DEPLOY_URL"
+          echo "deploy_id=$DEPLOY_ID" >> $GITHUB_OUTPUT
 
-          DEPLOY_ID=$(echo "$RESPONSE" | jq -r '.id // .uid // empty')
-
+      - name: Wait and assign production alias
+        run: |
+          DEPLOY_ID="${{ steps.deploy.outputs.deploy_id }}"
           if [ -z "$DEPLOY_ID" ]; then
-            echo "ERROR: Could not get deployment ID"
-            echo "$RESPONSE"
+            echo "No deployment ID found, skipping"
             exit 1
           fi
 
-          echo "deploy_id=$DEPLOY_ID" >> "$GITHUB_OUTPUT"
-          echo "Deployment created: $DEPLOY_ID"
-
-      - name: Wait for ready and assign production alias
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          set -e
-          DEPLOY_ID="${{ steps.deploy.outputs.deploy_id }}"
-
           for i in $(seq 1 40); do
             sleep 15
-            RESP=$(curl -s -H "Authorization: Bearer $VERCEL_TOKEN" \
-              "https://api.vercel.com/v13/deployments/$DEPLOY_ID")
-            STATE=$(echo "$RESP" | jq -r '.readyState // .state // "UNKNOWN"')
-            URL=$(echo "$RESP" | jq -r '.url // "pending"')
-            echo "[$i/40] $STATE | $URL"
+            STATE=$(curl -s \
+              -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+              "https://api.vercel.com/v13/deployments/$DEPLOY_ID" \
+              | grep -o '"readyState":"[^"]*"' | head -1 | cut -d'"' -f4)
+            echo "[$i/40] State: $STATE"
 
             if [ "$STATE" = "READY" ]; then
-              echo "Assigning basslabhq.vercel.app..."
+              echo "Deployment ready. Assigning basslabhq.vercel.app..."
               curl -s -X POST \
-                -H "Authorization: Bearer $VERCEL_TOKEN" \
+                -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
                 -H "Content-Type: application/json" \
                 "https://api.vercel.com/v2/deployments/$DEPLOY_ID/aliases" \
-                -d '{"alias":"basslabhq.vercel.app"}' | jq .
+                -d '{"alias":"basslabhq.vercel.app"}'
+              echo ""
               echo "Live at https://basslabhq.vercel.app"
               exit 0
             fi
@@ -83,5 +70,5 @@ jobs:
             fi
           done
 
-          echo "Timeout reached"
+          echo "Timeout waiting for deployment"
           exit 1
