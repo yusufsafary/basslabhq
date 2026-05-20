@@ -3,9 +3,11 @@ import { motion } from 'framer-motion';
 import { Link } from 'wouter';
 
 const timeline = [
-  { year: '2023', title: 'Origin', desc: 'Frustrated by scattered forum posts and outdated spreadsheets, two developers decided to build the tool they always wished existed.' },
-  { year: '2024', title: 'Alpha Launch', desc: 'First generator shipped to the community Discord. 500 players in the first 48 hours. The feedback loop began.' },
-  { year: '2025', title: 'V2 — BassLab HQ', desc: 'Full rebrand. New algorithm, 12+ locations, expanded species database, tournament-grade outputs. The platform keeps growing.' },
+  { year: '2026 Q1', title: 'Official Launch', desc: 'basslabhq.fun goes live. 12+ lakes, 7 species, tournament-grade session outputs — fully free, no signup required. The platform is open.' },
+  { year: '2026 Q2', title: 'Mobile & PWA', desc: 'Touch-optimized generator with offline support. Install on any device and run hotspot calculations at the lake, without a connection.' },
+  { year: '2026 Q3', title: '$BASS Token', desc: 'Community rewards on Solana. Contribute tournament data, verify hotspot coordinates, and earn $BASS. The platform belongs to its players.' },
+  { year: '2026 Q4', title: 'Tournament Mode', desc: 'Live bracket tracking, real-time leaderboards, and post-session analytics exports. Built for serious competitors who need an edge.' },
+  { year: '2027', title: 'Open API & Ecosystem', desc: 'Third-party integrations and a plugin system for custom lake and species data. Build on BassLab. The ecosystem opens up fully.' },
 ];
 
 const values = [
