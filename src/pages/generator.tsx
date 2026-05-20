@@ -94,7 +94,7 @@ function Sonar({ progress }: { progress: number }) {
           transformOrigin: 'bottom center',
           transform: `rotate(${progress * 3.6}deg)`,
           bottom: '50%', left: '50%',
-          transition: 'transform 0.1s linear',
+          transition: 'transform 0.08s linear',
         }}/>
         {/* Center dot */}
         <div className="w-3 h-3 rounded-full bg-green-400 z-10 shadow-lg shadow-green-400/60"/>
@@ -121,9 +121,12 @@ function RateBar({ value }: { value: number }) {
         <span className="text-xs font-mono font-bold" style={{ color }}>{label}</span>
       </div>
       <div className="h-2 bg-white/5 w-full relative overflow-hidden">
-        <motion.div initial={{ width:0 }} animate={{ width:`${value}%` }}
-          transition={{ duration:1.2, ease:'easeOut' }}
-          className="h-full absolute left-0 top-0" style={{ background: color }}/>
+        <motion.div
+          initial={{ width:0 }}
+          animate={{ width:`${value}%` }}
+          transition={{ duration:1.2, ease:[0.25,0.1,0.25,1] }}
+          className="h-full absolute left-0 top-0"
+          style={{ background: color }}/>
       </div>
       <div className="text-right mt-1">
         <span className="font-display text-4xl font-black" style={{ color }}>{value}<span className="text-xl text-slate-500">%</span></span>
@@ -144,6 +147,12 @@ const LOG_MESSAGES = [
   'Compiling tactical report...',
   'Scan complete. Results locked.',
 ];
+
+const tabVariants = {
+  initial: { opacity: 0, y: 8 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] as number[] } },
+  exit: { opacity: 0, y: -8, transition: { duration: 0.15, ease: [0.25, 0.1, 0.25, 1] as number[] } },
+};
 
 export default function Generator() {
   const { toast } = useToast();
@@ -171,6 +180,7 @@ export default function Generator() {
     setScanPct(0);
     setLogLines([]);
     setResult(null);
+    setActiveTab('loadout');
 
     let pct = 0;
     let logIdx = 0;
@@ -179,7 +189,7 @@ export default function Generator() {
       if (pct > 100) pct = 100;
       setScanPct(Math.floor(pct));
       if (logIdx < LOG_MESSAGES.length && pct >= (logIdx + 1) * (100 / LOG_MESSAGES.length)) {
-        setLogLines(l => [...l, `[${new Date().toLocaleTimeString()}] ${LOG_MESSAGES[logIdx]}`]);
+        setLogLines(l => [...l, `[${new Date().toLocaleTimeString('en-US')}] ${LOG_MESSAGES[logIdx]}`]);
         logIdx++;
       }
       if (pct >= 100) {
@@ -212,7 +222,11 @@ export default function Generator() {
   return (
     <div className="min-h-screen bg-[#060e1a] text-slate-200">
       {/* Header */}
-      <div className="border-b border-white/6 bg-[#04090f] px-6 md:px-12 py-5">
+      <motion.div
+        initial={{ opacity:0, y:-8 }}
+        animate={{ opacity:1, y:0 }}
+        transition={{ duration:0.4, ease:[0.25,0.1,0.25,1] }}
+        className="border-b border-white/6 bg-[#04090f] px-6 md:px-12 py-5">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="font-display text-3xl font-black text-white tracking-wide">TACTICAL GENERATOR</h1>
@@ -223,12 +237,17 @@ export default function Generator() {
             <span className="text-xs font-mono text-green-400">ENGINE ONLINE</span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
           {/* ── LEFT PANEL: Parameters ── */}
-          <div className="lg:col-span-4 xl:col-span-3">
+          <motion.div
+            initial={{ opacity:0, x:-16 }}
+            animate={{ opacity:1, x:0 }}
+            transition={{ duration:0.45, delay:0.1, ease:[0.25,0.1,0.25,1] }}
+            className="lg:col-span-4 xl:col-span-3">
             <div className="border border-white/8 bg-[#04090f] relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/60 to-transparent"/>
               <div className="px-5 py-4 border-b border-white/6">
@@ -267,7 +286,7 @@ export default function Generator() {
                     ))}
 
                     <button type="submit" disabled={phase==='scanning'}
-                      className="w-full mt-3 py-4 font-bold font-mono tracking-widest text-sm transition-all duration-200 relative overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="w-full mt-3 py-4 font-bold font-mono tracking-widest text-sm transition-all duration-200 relative overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
                       style={{ background: phase==='scanning' ? '#1a1a1a' : '#f59e0b', color: phase==='scanning'?'#888':'#000' }}>
                       {phase === 'scanning' ? (
                         <span className="flex items-center justify-center gap-2">
@@ -283,10 +302,15 @@ export default function Generator() {
                 </Form>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* ── CENTER / RIGHT PANEL ── */}
-          <div className="lg:col-span-8 xl:col-span-9 space-y-5">
+          <motion.div
+            initial={{ opacity:0, x:16 }}
+            animate={{ opacity:1, x:0 }}
+            transition={{ duration:0.45, delay:0.15, ease:[0.25,0.1,0.25,1] }}
+            className="lg:col-span-8 xl:col-span-9 space-y-5">
+
             {/* Sonar / Result header row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* Sonar display */}
@@ -296,24 +320,42 @@ export default function Generator() {
                   <p className="text-[10px] font-mono tracking-[0.22em] text-green-400/80 uppercase">SONAR DISPLAY</p>
                 </div>
                 <div style={{ height:180 }}>
-                  {phase === 'idle' && (
-                    <div className="h-full flex items-center justify-center" style={{ background:'#020c0a' }}>
-                      <div className="text-center">
-                        <div className="text-3xl mb-2 opacity-20">🎯</div>
-                        <p className="text-[10px] font-mono text-green-800 tracking-widest">AWAITING SCAN</p>
-                      </div>
-                    </div>
-                  )}
-                  {phase === 'scanning' && <Sonar progress={scanPct}/>}
-                  {phase === 'done' && result && (
-                    <div className="h-full flex items-center justify-center" style={{ background:'#020c0a' }}>
-                      <div className="text-center">
-                        <div className="text-4xl mb-2 animate-bounce">🎣</div>
-                        <p className="text-[10px] font-mono text-green-400 tracking-widest">TARGET ACQUIRED</p>
-                        <p className="text-xs font-mono text-green-300/60 mt-1">{result.species.toUpperCase()}</p>
-                      </div>
-                    </div>
-                  )}
+                  <AnimatePresence mode="wait">
+                    {phase === 'idle' && (
+                      <motion.div key="idle-sonar"
+                        initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+                        transition={{ duration:0.2 }}
+                        className="h-full flex items-center justify-center" style={{ background:'#020c0a' }}>
+                        <div className="text-center">
+                          <div className="text-3xl mb-2 opacity-20">🎯</div>
+                          <p className="text-[10px] font-mono text-green-800 tracking-widest">AWAITING SCAN</p>
+                        </div>
+                      </motion.div>
+                    )}
+                    {phase === 'scanning' && (
+                      <motion.div key="scanning-sonar"
+                        initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+                        transition={{ duration:0.2 }}
+                        className="h-full">
+                        <Sonar progress={scanPct}/>
+                      </motion.div>
+                    )}
+                    {phase === 'done' && result && (
+                      <motion.div key="done-sonar"
+                        initial={{ opacity:0, scale:0.96 }} animate={{ opacity:1, scale:1 }} exit={{ opacity:0 }}
+                        transition={{ duration:0.3, ease:[0.25,0.1,0.25,1] }}
+                        className="h-full flex items-center justify-center" style={{ background:'#020c0a' }}>
+                        <div className="text-center">
+                          <motion.div
+                            animate={{ y:[0,-4,0] }}
+                            transition={{ duration:1.5, repeat:Infinity, ease:'easeInOut' }}
+                            className="text-4xl mb-2">🎣</motion.div>
+                          <p className="text-[10px] font-mono text-green-400 tracking-widest">TARGET ACQUIRED</p>
+                          <p className="text-xs font-mono text-green-300/60 mt-1">{result.species.toUpperCase()}</p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
 
@@ -324,29 +366,40 @@ export default function Generator() {
                   <p className="text-[10px] font-mono tracking-[0.22em] text-amber-400/80 uppercase">CATCH PROBABILITY</p>
                 </div>
                 <div className="p-5">
-                  {phase === 'idle' && (
-                    <div className="flex items-center justify-center h-32 opacity-30">
-                      <p className="text-xs font-mono text-slate-500 tracking-widest">— NO DATA —</p>
-                    </div>
-                  )}
-                  {phase === 'scanning' && (
-                    <div className="flex items-center justify-center h-32">
-                      <div className="w-16 h-16 rounded-full border-4 border-amber-500/30 border-t-amber-500 animate-spin"/>
-                    </div>
-                  )}
-                  {phase === 'done' && result && (
-                    <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} className="pt-3">
-                      <RateBar value={result.catchRate}/>
-                      <div className="grid grid-cols-2 gap-3 mt-5">
-                        {[['DEPTH ZONE',result.depth],['WATER TEMP',result.waterTemp],['MOON',result.moonPhase],['CAST',result.castDistance]].map(([k,v])=>(
-                          <div key={k} className="border border-white/6 px-3 py-2 bg-black/20">
-                            <p className="text-[9px] font-mono text-slate-600 tracking-widest mb-0.5">{k}</p>
-                            <p className="text-xs font-mono text-slate-300">{v}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
+                  <AnimatePresence mode="wait">
+                    {phase === 'idle' && (
+                      <motion.div key="idle-rate"
+                        initial={{ opacity:0 }} animate={{ opacity:0.3 }} exit={{ opacity:0 }}
+                        transition={{ duration:0.2 }}
+                        className="flex items-center justify-center h-32">
+                        <p className="text-xs font-mono text-slate-500 tracking-widest">— NO DATA —</p>
+                      </motion.div>
+                    )}
+                    {phase === 'scanning' && (
+                      <motion.div key="scanning-rate"
+                        initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+                        transition={{ duration:0.2 }}
+                        className="flex items-center justify-center h-32">
+                        <div className="w-16 h-16 rounded-full border-4 border-amber-500/30 border-t-amber-500 animate-spin"/>
+                      </motion.div>
+                    )}
+                    {phase === 'done' && result && (
+                      <motion.div key="done-rate"
+                        initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0 }}
+                        transition={{ duration:0.35, ease:[0.25,0.1,0.25,1] }}
+                        className="pt-3">
+                        <RateBar value={result.catchRate}/>
+                        <div className="grid grid-cols-2 gap-3 mt-5">
+                          {[['DEPTH ZONE',result.depth],['WATER TEMP',result.waterTemp],['MOON',result.moonPhase],['CAST',result.castDistance]].map(([k,v])=>(
+                            <div key={k} className="border border-white/6 px-3 py-2 bg-black/20">
+                              <p className="text-[9px] font-mono text-slate-600 tracking-widest mb-0.5">{k}</p>
+                              <p className="text-xs font-mono text-slate-300">{v}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             </div>
@@ -355,19 +408,33 @@ export default function Generator() {
             <div className="border border-white/8 bg-[#04090f]">
               <div className="px-5 py-3 border-b border-white/6 flex items-center justify-between">
                 <p className="text-[10px] font-mono tracking-[0.22em] text-slate-500 uppercase">SCAN LOG</p>
-                {phase === 'scanning' && <span className="text-[9px] font-mono text-green-400/60 animate-pulse">● ACTIVE</span>}
-                {phase === 'done' && <span className="text-[9px] font-mono text-amber-400/60">● COMPLETE</span>}
+                <AnimatePresence mode="wait">
+                  {phase === 'scanning' && (
+                    <motion.span key="active" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+                      className="text-[9px] font-mono text-green-400/60 animate-pulse">● ACTIVE</motion.span>
+                  )}
+                  {phase === 'done' && (
+                    <motion.span key="complete" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+                      className="text-[9px] font-mono text-amber-400/60">● COMPLETE</motion.span>
+                  )}
+                </AnimatePresence>
               </div>
               <div ref={logRef} className="p-4 font-mono text-xs text-green-400/70 space-y-1 overflow-y-auto" style={{ height:96, background:'#020c0a' }}>
                 {logLines.length === 0 && <p className="text-slate-700">// Awaiting parameters...</p>}
-                {logLines.map((l,i) => <p key={i}>{l}</p>)}
+                {logLines.map((l,i) => (
+                  <motion.p key={i} initial={{ opacity:0, x:-8 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.2 }}>{l}</motion.p>
+                ))}
               </div>
             </div>
 
             {/* Results panel */}
             <AnimatePresence>
               {phase === 'done' && result && (
-                <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0 }}
+                <motion.div
+                  initial={{ opacity:0, y:20 }}
+                  animate={{ opacity:1, y:0 }}
+                  exit={{ opacity:0, y:-8 }}
+                  transition={{ duration:0.4, ease:[0.25,0.1,0.25,1] }}
                   className="border border-amber-500/25 bg-[#04090f] relative overflow-hidden">
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/80 to-transparent"/>
 
@@ -375,10 +442,16 @@ export default function Generator() {
                   <div className="flex border-b border-white/6">
                     {(['loadout','coords','tips'] as const).map(tab => (
                       <button key={tab} onClick={()=>setActiveTab(tab)}
-                        className={`px-6 py-3 text-[10px] font-mono tracking-[0.2em] uppercase transition-colors ${
-                          activeTab===tab ? 'text-amber-400 border-b border-amber-500 -mb-px bg-amber-500/5' : 'text-slate-600 hover:text-slate-400'
+                        className={`px-6 py-3 text-[10px] font-mono tracking-[0.2em] uppercase transition-all duration-200 relative ${
+                          activeTab===tab ? 'text-amber-400 bg-amber-500/5' : 'text-slate-600 hover:text-slate-400'
                         }`}>
                         {tab==='loadout'?'LOADOUT':tab==='coords'?'COORDINATES':'TACTICS'}
+                        {activeTab === tab && (
+                          <motion.div
+                            layoutId="tab-indicator"
+                            className="absolute bottom-0 left-0 right-0 h-px bg-amber-500"
+                            transition={{ duration:0.2, ease:[0.25,0.1,0.25,1] }}/>
+                        )}
                       </button>
                     ))}
                     <div className="flex-1"/>
@@ -394,75 +467,86 @@ export default function Generator() {
                   </div>
 
                   <div className="p-6">
-                    {activeTab === 'loadout' && (
-                      <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} className="space-y-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="border border-white/6 p-4 bg-black/20">
-                            <p className="text-[9px] font-mono text-slate-600 mb-1 tracking-widest">PRIMARY BAIT</p>
-                            <p className="font-display text-2xl text-amber-400">{result.bait}</p>
-                          </div>
-                          <div className="border border-white/6 p-4 bg-black/20">
-                            <p className="text-[9px] font-mono text-slate-600 mb-1 tracking-widest">SECONDARY BAIT</p>
-                            <p className="font-display text-2xl text-teal-400">{result.secondaryBait}</p>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                          {[['LINE WEIGHT',result.lineWeight],['DEPTH ZONE',result.depth],['CAST RANGE',result.castDistance],['WATER TEMP',result.waterTemp]].map(([k,v])=>(
-                            <div key={k} className="border border-white/5 p-3 bg-black/15">
-                              <p className="text-[9px] font-mono text-slate-600 mb-1 tracking-widest">{k}</p>
-                              <p className="text-sm font-mono text-slate-200">{v}</p>
+                    <AnimatePresence mode="wait">
+                      {activeTab === 'loadout' && (
+                        <motion.div key="loadout" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="border border-white/6 p-4 bg-black/20">
+                              <p className="text-[9px] font-mono text-slate-600 mb-1 tracking-widest">PRIMARY BAIT</p>
+                              <p className="font-display text-2xl text-amber-400">{result.bait}</p>
                             </div>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {activeTab === 'coords' && (
-                      <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }}>
-                        <div className="border border-teal-500/20 p-5 bg-teal-500/4 mb-4">
-                          <p className="text-[9px] font-mono text-teal-400/60 mb-1 tracking-widest">GPS COORDINATES — {result.lake.toUpperCase()}</p>
-                          <p className="font-display text-3xl text-teal-400">{result.coords}</p>
-                        </div>
-                        <div className="grid grid-cols-3 gap-3">
-                          {[['TARGET',result.species],['MOON PHASE',result.moonPhase],['DEPTH',result.depth]].map(([k,v])=>(
-                            <div key={k} className="border border-white/5 p-3 bg-black/15">
-                              <p className="text-[9px] font-mono text-slate-600 mb-1 tracking-widest">{k}</p>
-                              <p className="text-sm font-mono text-slate-200">{v}</p>
+                            <div className="border border-white/6 p-4 bg-black/20">
+                              <p className="text-[9px] font-mono text-slate-600 mb-1 tracking-widest">SECONDARY BAIT</p>
+                              <p className="font-display text-2xl text-teal-400">{result.secondaryBait}</p>
                             </div>
-                          ))}
-                        </div>
-                        <div className="mt-4 border border-white/5 p-4 bg-black/20">
-                          <p className="text-[9px] font-mono text-slate-600 mb-2 tracking-widest">SHAREABLE REPORT</p>
-                          <code className="text-xs text-green-400/70 font-mono leading-relaxed block">
-                            {`basslabhq.com/report?lake=${result.lake.replace(/ /g,'+')}&species=${result.species.replace(/ /g,'+')}&rate=${result.catchRate}`}
-                          </code>
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {activeTab === 'tips' && (
-                      <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} className="space-y-3">
-                        {result.tips.map((tip,i)=>(
-                          <div key={i} className="flex gap-4 border border-white/5 p-4 bg-black/15 group hover:border-amber-500/20 transition-colors">
-                            <span className="font-display text-xl text-amber-400/30 group-hover:text-amber-400/60 transition-colors flex-shrink-0">{String(i+1).padStart(2,'0')}</span>
-                            <p className="text-sm text-slate-300 leading-relaxed">{tip}</p>
                           </div>
-                        ))}
-                      </motion.div>
-                    )}
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            {[['LINE WEIGHT',result.lineWeight],['DEPTH ZONE',result.depth],['CAST RANGE',result.castDistance],['WATER TEMP',result.waterTemp]].map(([k,v])=>(
+                              <div key={k} className="border border-white/5 p-3 bg-black/15">
+                                <p className="text-[9px] font-mono text-slate-600 mb-1 tracking-widest">{k}</p>
+                                <p className="text-sm font-mono text-slate-200">{v}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {activeTab === 'coords' && (
+                        <motion.div key="coords" variants={tabVariants} initial="initial" animate="animate" exit="exit">
+                          <div className="border border-teal-500/20 p-5 bg-teal-500/4 mb-4">
+                            <p className="text-[9px] font-mono text-teal-400/60 mb-1 tracking-widest">GPS COORDINATES — {result.lake.toUpperCase()}</p>
+                            <p className="font-display text-3xl text-teal-400">{result.coords}</p>
+                          </div>
+                          <div className="grid grid-cols-3 gap-3">
+                            {[['TARGET',result.species],['MOON PHASE',result.moonPhase],['DEPTH',result.depth]].map(([k,v])=>(
+                              <div key={k} className="border border-white/5 p-3 bg-black/15">
+                                <p className="text-[9px] font-mono text-slate-600 mb-1 tracking-widest">{k}</p>
+                                <p className="text-sm font-mono text-slate-200">{v}</p>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="mt-4 border border-white/5 p-4 bg-black/20">
+                            <p className="text-[9px] font-mono text-slate-600 mb-2 tracking-widest">SHAREABLE REPORT</p>
+                            <code className="text-xs text-green-400/70 font-mono leading-relaxed block">
+                              {`basslabhq.com/report?lake=${result.lake.replace(/ /g,'+')}&species=${result.species.replace(/ /g,'+')}&rate=${result.catchRate}`}
+                            </code>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {activeTab === 'tips' && (
+                        <motion.div key="tips" variants={tabVariants} initial="initial" animate="animate" exit="exit" className="space-y-3">
+                          {result.tips.map((tip,i)=>(
+                            <motion.div key={i}
+                              initial={{ opacity:0, x:-8 }}
+                              animate={{ opacity:1, x:0 }}
+                              transition={{ delay:i*0.07, duration:0.25, ease:[0.25,0.1,0.25,1] }}
+                              className="flex gap-4 border border-white/5 p-4 bg-black/15 group hover:border-amber-500/20 transition-colors">
+                              <span className="font-display text-xl text-amber-400/30 group-hover:text-amber-400/60 transition-colors flex-shrink-0">{String(i+1).padStart(2,'0')}</span>
+                              <p className="text-sm text-slate-300 leading-relaxed">{tip}</p>
+                            </motion.div>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
             {/* Idle placeholder */}
-            {phase === 'idle' && (
-              <div className="border border-dashed border-white/8 p-12 text-center">
-                <div className="text-5xl mb-4 opacity-20">🎣</div>
-                <p className="text-xs font-mono text-slate-600 tracking-[0.25em] uppercase">Configure parameters and initiate scan</p>
-              </div>
-            )}
-          </div>
+            <AnimatePresence>
+              {phase === 'idle' && (
+                <motion.div
+                  initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+                  transition={{ duration:0.3 }}
+                  className="border border-dashed border-white/8 p-12 text-center">
+                  <div className="text-5xl mb-4 opacity-20">🎣</div>
+                  <p className="text-xs font-mono text-slate-600 tracking-[0.25em] uppercase">Configure parameters and initiate scan</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </div>
       </div>
     </div>

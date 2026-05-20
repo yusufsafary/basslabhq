@@ -16,7 +16,7 @@ function Fish({ y, dur, size, color, begin, dir }: { y:number; dur:string; size:
   const startX = dir === 1 ? -18 : 118;
   const endX   = dir === 1 ? 118 : -18;
   return (
-    <g style={{ animation: `none` }}>
+    <g>
       <animateTransform attributeName="transform" type="translate"
         values={`${startX},0 ${endX},0`} dur={dur} begin={begin} repeatCount="indefinite"
         calcMode="linear" additive="replace"
@@ -39,12 +39,14 @@ function Weed({ x, h, color, delay }: { x:number; h:number; color:string; delay:
       <path d={`M${x},100 Q${x-2},${100-h*0.55} ${x+0.8},${100-h}`}
         stroke={color} strokeWidth="0.9" fill="none" strokeLinecap="round">
         <animateTransform attributeName="transform" type="rotate"
-          values={`-5,${x},100;5,${x},100;-5,${x},100`} dur="3.5s" begin={delay} repeatCount="indefinite"/>
+          values={`-5,${x},100;5,${x},100;-5,${x},100`} dur="3.5s" begin={delay} repeatCount="indefinite"
+          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
       </path>
       <path d={`M${x},100 Q${x+2.2},${100-h*0.4} ${x-0.6},${100-h*0.85}`}
         stroke={color} strokeWidth="0.6" fill="none" strokeLinecap="round" opacity="0.65">
         <animateTransform attributeName="transform" type="rotate"
-          values={`4,${x},100;-4,${x},100;4,${x},100`} dur="4.2s" begin={delay} repeatCount="indefinite"/>
+          values={`4,${x},100;-4,${x},100;4,${x},100`} dur="4.2s" begin={delay} repeatCount="indefinite"
+          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
       </path>
     </g>
   );
@@ -53,11 +55,13 @@ function Weed({ x, h, color, delay }: { x:number; h:number; color:string; delay:
 export default function FishingScene({ compact = false }: { compact?: boolean }) {
   const [bobber, setBobber] = useState<'idle'|'dip'|'strike'>('idle');
   const [strikes, setStrikes] = useState(0);
+  const [rippleKey, setRippleKey] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout>|null>(null);
 
   const doBobberClick = useCallback(() => {
     if (bobber !== 'idle') return;
     setBobber('dip');
+    setRippleKey(k => k + 1);
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       setBobber('strike');
@@ -114,7 +118,8 @@ export default function FishingScene({ compact = false }: { compact?: boolean })
         ].map(([cx,cy,r],i) => (
           <circle key={i} cx={cx} cy={cy} r={r} fill="white" opacity="0.55">
             <animate attributeName="opacity" values="0.25;0.85;0.25"
-              dur={`${2.2+(i%5)*0.8}s`} begin={`${(i*0.37)%4}s`} repeatCount="indefinite"/>
+              dur={`${2.2+(i%5)*0.8}s`} begin={`${(i*0.37)%4}s`} repeatCount="indefinite"
+              calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
           </circle>
         ))}
 
@@ -134,10 +139,10 @@ export default function FishingScene({ compact = false }: { compact?: boolean })
 
         {/* Surface shimmer */}
         <rect x="-30" y="46.8" width="45" height="1.8" fill="url(#fsglow)" opacity="0.65">
-          <animate attributeName="x" values="-30;110" dur="5.5s" repeatCount="indefinite"/>
+          <animate attributeName="x" values="-30;110" dur="5.5s" repeatCount="indefinite" calcMode="linear"/>
         </rect>
         <rect x="-70" y="53" width="55" height="1.2" fill="url(#fsglow)" opacity="0.35">
-          <animate attributeName="x" values="-70;110" dur="8s" begin="-3s" repeatCount="indefinite"/>
+          <animate attributeName="x" values="-70;110" dur="8s" begin="-3s" repeatCount="indefinite" calcMode="linear"/>
         </rect>
 
         {/* Water surface wave */}
@@ -146,22 +151,25 @@ export default function FishingScene({ compact = false }: { compact?: boolean })
             values="M0,47 Q13,45.3 26,47 Q39,48.7 52,47 Q65,45.3 78,47 Q91,48.7 100,47 L100,46 L0,46Z;
                     M0,47.7 Q13,46 26,47.7 Q39,49.3 52,47.7 Q65,46 78,47.7 Q91,49.3 100,47.7 L100,46 L0,46Z;
                     M0,47 Q13,45.3 26,47 Q39,48.7 52,47 Q65,45.3 78,47 Q91,48.7 100,47 L100,46 L0,46Z"
-            dur="4.5s" repeatCount="indefinite"/>
+            dur="4.5s" repeatCount="indefinite"
+            calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
         </path>
         <path stroke="rgba(34,211,238,0.32)" strokeWidth="0.28" fill="none">
           <animate attributeName="d"
             values="M0,47 Q13,45.5 26,47 Q39,48.5 52,47 Q65,45.5 78,47 Q91,48.5 100,47;
                     M0,47.8 Q13,46.2 26,47.8 Q39,49.3 52,47.8 Q65,46.2 78,47.8 Q91,49.3 100,47.8;
                     M0,47 Q13,45.5 26,47 Q39,48.5 52,47 Q65,45.5 78,47 Q91,48.5 100,47"
-            dur="4.5s" repeatCount="indefinite"/>
+            dur="4.5s" repeatCount="indefinite"
+            calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
         </path>
 
         {/* Moon reflection on water */}
         <ellipse cx="82" cy="47.8" rx="4" ry="0.7" fill="rgba(210,225,255,0.07)">
-          <animate attributeName="rx" values="3.5;5.5;3.5" dur="4s" repeatCount="indefinite"/>
+          <animate attributeName="rx" values="3.5;5.5;3.5" dur="4s" repeatCount="indefinite"
+            calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
         </ellipse>
 
-        {/* Underwater water light rays */}
+        {/* Underwater light rays */}
         <g clipPath="url(#wclip)" opacity="0.06">
           <polygon points="75,46 78,46 88,100 72,100" fill="#22d3ee"/>
           <polygon points="82,46 85,46 95,100 79,100" fill="#22d3ee"/>
@@ -194,29 +202,23 @@ export default function FishingScene({ compact = false }: { compact?: boolean })
         {[10,28,50,72,90].map((bx,i)=>(
           <circle key={bx} cx={bx} cy="95" r="0.55" fill="none"
             stroke="rgba(34,211,238,0.38)" strokeWidth="0.18">
-            <animate attributeName="cy" values="95;47" dur={`${4.5+i}s`} begin={`${i*0.9}s`} repeatCount="indefinite"/>
-            <animate attributeName="opacity" values="0.7;0" dur={`${4.5+i}s`} begin={`${i*0.9}s`} repeatCount="indefinite"/>
-            <animate attributeName="r" values="0.4;0.9" dur={`${4.5+i}s`} begin={`${i*0.9}s`} repeatCount="indefinite"/>
+            <animate attributeName="cy" values="95;47" dur={`${4.5+i}s`} begin={`${i*0.9}s`} repeatCount="indefinite" calcMode="linear"/>
+            <animate attributeName="opacity" values="0.7;0" dur={`${4.5+i}s`} begin={`${i*0.9}s`} repeatCount="indefinite"
+              calcMode="spline" keyTimes="0;1" keySplines="0.42 0 0.58 1"/>
+            <animate attributeName="r" values="0.4;0.9" dur={`${4.5+i}s`} begin={`${i*0.9}s`} repeatCount="indefinite" calcMode="linear"/>
           </circle>
         ))}
 
         {/* === FISHING ROD === */}
-        {/* Arm/grip */}
         <line x1="100" y1="58" x2="93" y2="46" stroke="#3b2010" strokeWidth="3" strokeLinecap="round"/>
-        {/* Cork grip */}
         <ellipse cx="93" cy="46" rx="2.2" ry="1.4" fill="#c8a070" transform="rotate(-38,93,46)"/>
-        {/* Rod lower */}
         <line x1="93" y1="46" x2="81" y2="28" stroke="#7a4f25" strokeWidth="2" strokeLinecap="round"/>
-        {/* Rod mid */}
         <line x1="81" y1="28" x2="71" y2="14" stroke="#9b6835" strokeWidth="1.3" strokeLinecap="round"/>
-        {/* Rod tip */}
         <line x1="71" y1="14" x2="68.5" y2="9" stroke="#b48c5a" strokeWidth="0.75" strokeLinecap="round"/>
-        {/* Reel */}
         <circle cx="89" cy="39" r="2.2" fill="#252525"/>
         <circle cx="89" cy="39" r="1.3" fill="#3a3a3a"/>
         <line x1="89" y1="37.8" x2="89" y2="40.2" stroke="#555" strokeWidth="0.45"/>
         <line x1="87.8" y1="39" x2="90.2" y2="39" stroke="#555" strokeWidth="0.45"/>
-        {/* Guide rings */}
         <circle cx="84" cy="33" r="1.1" fill="none" stroke="#888" strokeWidth="0.42"/>
         <circle cx="77" cy="22" r="0.85" fill="none" stroke="#888" strokeWidth="0.36"/>
         <circle cx="73" cy="16" r="0.65" fill="none" stroke="#999" strokeWidth="0.3"/>
@@ -224,7 +226,8 @@ export default function FishingScene({ compact = false }: { compact?: boolean })
 
         {/* Fishing line */}
         <path d={`M68.5,9 Q68,28 68,${bobY}`}
-          stroke="rgba(230,230,230,0.6)" strokeWidth="0.18" fill="none"/>
+          stroke="rgba(230,230,230,0.6)" strokeWidth="0.18" fill="none"
+          style={{ transition: 'd 0.4s ease-in-out' }}/>
 
         {/* Bobber */}
         <g transform={`translate(68,${bobY})`}
@@ -244,49 +247,63 @@ export default function FishingScene({ compact = false }: { compact?: boolean })
           <line x1="0" y1="-1.15" x2="0" y2="-0.2" stroke="#555" strokeWidth="0.22"/>
           <circle cx="0" cy="-1.22" r="0.17" fill="#dc2626"/>
 
-          {/* Bobber idle bob */}
+          {/* Smooth idle bob — ease-in-out spline */}
           {bobber === 'idle' && (
             <animateTransform attributeName="transform" type="translate"
-              values="0,0;0,0.55;0,0" dur="3s" repeatCount="indefinite" additive="sum"/>
+              values="0,0;0,0.6;0,0" dur="3.2s" repeatCount="indefinite" additive="sum"
+              calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
           )}
 
-          {/* Hint ripple ring */}
+          {/* Ripple ring when idle */}
           {bobber === 'idle' && (
             <circle cx="0" cy="0" r="2" fill="none" stroke="rgba(34,211,238,0.22)" strokeWidth="0.28">
-              <animate attributeName="r" values="1.4;4" dur="2.2s" repeatCount="indefinite"/>
-              <animate attributeName="opacity" values="0.55;0" dur="2.2s" repeatCount="indefinite"/>
+              <animate attributeName="r" values="1.4;4" dur="2.2s" repeatCount="indefinite"
+                calcMode="spline" keyTimes="0;1" keySplines="0.25 0.1 0.25 1"/>
+              <animate attributeName="opacity" values="0.55;0" dur="2.2s" repeatCount="indefinite"
+                calcMode="spline" keyTimes="0;1" keySplines="0.25 0.1 0.25 1"/>
             </circle>
           )}
 
           {/* Strike flash */}
           {bobber === 'strike' && (
             <circle cx="0" cy="0" r="3" fill="rgba(245,158,11,0.3)">
-              <animate attributeName="r" values="2;7" dur="0.9s" fill="freeze"/>
-              <animate attributeName="opacity" values="0.6;0" dur="0.9s" fill="freeze"/>
+              <animate attributeName="r" values="2;7" dur="0.9s" fill="freeze"
+                calcMode="spline" keyTimes="0;1" keySplines="0.25 0.1 0.25 1"/>
+              <animate attributeName="opacity" values="0.6;0" dur="0.9s" fill="freeze"
+                calcMode="spline" keyTimes="0;1" keySplines="0.25 0.1 0.25 1"/>
             </circle>
           )}
         </g>
 
-        {/* Dip ripples */}
-        {(bobber==='dip'||bobber==='strike') && <>
-          <ellipse cx="68" cy="47.2" rx="1" ry="0.4" fill="none" stroke="rgba(34,211,238,0.55)" strokeWidth="0.32">
-            <animate attributeName="rx" values="0.8;6" dur="1.4s" fill="freeze"/>
-            <animate attributeName="ry" values="0.3;1.4" dur="1.4s" fill="freeze"/>
-            <animate attributeName="opacity" values="0.7;0" dur="1.4s" fill="freeze"/>
-          </ellipse>
-          <ellipse cx="68" cy="47.2" rx="0.5" ry="0.25" fill="none" stroke="rgba(34,211,238,0.38)" strokeWidth="0.22">
-            <animate attributeName="rx" values="0.5;4" dur="1.8s" begin="0.3s" fill="freeze"/>
-            <animate attributeName="ry" values="0.2;0.9" dur="1.8s" begin="0.3s" fill="freeze"/>
-            <animate attributeName="opacity" values="0.5;0" dur="1.8s" begin="0.3s" fill="freeze"/>
-          </ellipse>
-        </>}
+        {/* Dip & strike ripples — keyed to force remount on each dip */}
+        {(bobber==='dip'||bobber==='strike') && (
+          <g key={rippleKey}>
+            <ellipse cx="68" cy="47.2" rx="1" ry="0.4" fill="none" stroke="rgba(34,211,238,0.55)" strokeWidth="0.32">
+              <animate attributeName="rx" values="0.8;6" dur="1.4s" fill="freeze"
+                calcMode="spline" keyTimes="0;1" keySplines="0.25 0.1 0.25 1"/>
+              <animate attributeName="ry" values="0.3;1.4" dur="1.4s" fill="freeze"
+                calcMode="spline" keyTimes="0;1" keySplines="0.25 0.1 0.25 1"/>
+              <animate attributeName="opacity" values="0.7;0" dur="1.4s" fill="freeze"
+                calcMode="spline" keyTimes="0;1" keySplines="0.25 0.1 0.25 1"/>
+            </ellipse>
+            <ellipse cx="68" cy="47.2" rx="0.5" ry="0.25" fill="none" stroke="rgba(34,211,238,0.38)" strokeWidth="0.22">
+              <animate attributeName="rx" values="0.5;4" dur="1.8s" begin="0.3s" fill="freeze"
+                calcMode="spline" keyTimes="0;1" keySplines="0.25 0.1 0.25 1"/>
+              <animate attributeName="ry" values="0.2;0.9" dur="1.8s" begin="0.3s" fill="freeze"
+                calcMode="spline" keyTimes="0;1" keySplines="0.25 0.1 0.25 1"/>
+              <animate attributeName="opacity" values="0.5;0" dur="1.8s" begin="0.3s" fill="freeze"
+                calcMode="spline" keyTimes="0;1" keySplines="0.25 0.1 0.25 1"/>
+            </ellipse>
+          </g>
+        )}
 
         {/* Strike label */}
         {bobber === 'strike' && (
           <text x="60" y="38" fontSize="3.5" fill="#f59e0b" textAnchor="middle"
             fontFamily="monospace" fontWeight="bold">
             🎣 STRIKE!
-            <animate attributeName="opacity" values="0;1;1;0" dur="0.9s" fill="freeze"/>
+            <animate attributeName="opacity" values="0;1;1;0" dur="0.9s" fill="freeze"
+              calcMode="spline" keyTimes="0;0.15;0.7;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1"/>
           </text>
         )}
 
